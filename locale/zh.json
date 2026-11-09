@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "控制工程绘图台",
+    "description": "根据传递函数绘制 Bode、Nyquist 与根轨迹，并给出逐步计算过程。"
+  }
+}

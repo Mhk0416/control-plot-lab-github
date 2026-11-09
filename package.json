@@ -1,0 +1,54 @@
+{
+  "name": "dsh-control-plot-lab",
+  "version": "1.0.0",
+  "description": "Transfer-function Bode, Nyquist and root-locus workbench with calculation steps.",
+  "license": "MIT",
+  "author": "Mhk0416",
+  "type": "module",
+  "homepage": "https://github.com/Mhk0416/control-plot-lab-github",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mhk0416/control-plot-lab-github.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Mhk0416/control-plot-lab-github/issues"
+  },
+  "keywords": [
+    "dsh-plugin",
+    "deepseek-harness",
+    "control-systems",
+    "bode",
+    "nyquist",
+    "root-locus"
+  ],
+  "engines": {
+    "dsh": ">=0.2.1"
+  },
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "cordis.patch.yml",
+    "locale/*.json",
+    "icon.svg",
+    "README.md",
+    "LICENSE"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-conversation"
+      ]
+    }
+  }
+}

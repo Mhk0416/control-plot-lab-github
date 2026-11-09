@@ -1,0 +1,6 @@
+url: https://github.com/Mhk0416/control-plot-lab-github
+name: Mhk0416/control-plot-lab-github
+category: ui
+description:
+  en: 'A local-first transfer-function workbench for DSH: type G(s) and get interactive Bode, Nyquist and root-locus plots with a step-by-step derivation panel. Supports symbolic K (including K in the numerator or denominator), pure delay e^(-tau*s) (exact in Bode/Nyquist, second-order Pade in root locus), zoom/pan, and offline use. No runtime network calls or third-party dependencies.'
+  zh: '在 DSH 内输入传递函数 G(s)，直接生成可缩放的 Bode、Nyquist 与根轨迹，并在右侧给出逐步推导。支持符号 K（可在分子或分母）、纯滞后 e^(-τs)（Bode/Nyquist 精确，根轨迹使用二阶 Padé）、图表滚轮缩放与拖动，以及断网使用；无运行时网络请求和第三方依赖。'

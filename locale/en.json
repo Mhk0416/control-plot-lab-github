@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Control plot lab",
+    "description": "Plots Bode, Nyquist and root locus from a transfer function with calculation steps."
+  }
+}
