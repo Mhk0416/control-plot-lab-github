@@ -117,14 +117,12 @@ function createControlLabUI(React, h, engine, t) {
   ];
 
   const LAUNCHER_CSS = `
-    .cl-launcher{width:28px;height:28px;border:0;border-radius:8px;background:transparent;color:var(--dsw-alias-label-secondary,#6b7280);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:0;transition:background .15s,color .15s}
-    .cl-launcher:hover{background:var(--dsw-alias-bg-layer-2,#f3f4f6);color:var(--dsw-alias-label-primary,#111827)}
+    .cl-launcher{height:28px;display:inline-flex;align-items:center;gap:5px;border:1px solid var(--dsw-alias-border-l1,#e5e7eb);border-radius:8px;background:var(--dsw-alias-bg-layer-2,#f3f4f6);color:var(--dsw-alias-label-secondary,#6b7280);padding:0 8px;font-size:11.5px;line-height:1.4;cursor:pointer;white-space:nowrap;transition:border-color .15s,color .15s,background .15s;font-family:var(--dsw-font-family,ui-sans-serif,system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif)}
+    .cl-launcher:hover{border-color:var(--dsw-alias-brand-primary,#2563eb);color:var(--dsw-alias-brand-primary,#2563eb);background:var(--dsw-alias-bg-layer-1,#fff)}
     .cl-launcher:focus-visible{outline:2px solid var(--dsw-alias-brand-primary,#2563eb);outline-offset:2px}
-    .cl-fab{position:fixed;z-index:2147483000;display:inline-flex;align-items:center;gap:8px;padding:9px 14px 9px 11px;border:1px solid rgba(255,255,255,.2);border-radius:999px;background:linear-gradient(135deg,#1d4ed8,#2563eb 60%,#0ea5e9);color:#f8fafc;font-size:12.5px;font-weight:650;letter-spacing:.01em;cursor:grab;box-shadow:0 8px 24px rgba(37,99,235,.34),0 2px 6px rgba(2,6,23,.2);pointer-events:auto;transition:box-shadow .15s,filter .15s;font-family:var(--dsw-font-family,ui-sans-serif,system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif);touch-action:none;user-select:none}
-    .cl-fab:hover{box-shadow:0 12px 30px rgba(37,99,235,.42),0 3px 8px rgba(2,6,23,.22);filter:saturate(1.08)}
-    .cl-fab:active{cursor:grabbing}
-    .cl-fab:focus-visible{outline:2px solid #bfdbfe;outline-offset:3px}
-    @media (max-width:820px){.cl-fab{padding:8px 12px 8px 10px;font-size:12px}}
+    .cl-launcher svg{width:15px;height:15px;flex:none}
+    .cl-launcher-label{display:inline-block}
+    @media (max-width:1100px){.cl-launcher-label{display:none}.cl-launcher{width:28px;padding:0;justify-content:center;border-color:transparent;background:transparent}}
   `;
 
   const CSS = `
@@ -246,33 +244,6 @@ function createControlLabUI(React, h, engine, t) {
     try { window.localStorage.setItem('control-lab.expr', v); } catch (err) { /* ignore */ }
   }
 
-  function defaultFabPos() {
-    const w = (typeof window !== 'undefined' && window.innerWidth) || 1280;
-    const h = (typeof window !== 'undefined' && window.innerHeight) || 800;
-    return { x: Math.max(8, w - 176), y: Math.max(8, h - 310) };
-  }
-  function clampFabPos(p) {
-    const w = (typeof window !== 'undefined' && window.innerWidth) || 1280;
-    const h = (typeof window !== 'undefined' && window.innerHeight) || 800;
-    return {
-      x: Math.min(Math.max(8, Number(p && p.x) || 8), Math.max(8, w - 172)),
-      y: Math.min(Math.max(8, Number(p && p.y) || 8), Math.max(8, h - 56)),
-    };
-  }
-  function readFabPos() {
-    try {
-      const raw = window.localStorage.getItem('control-lab.fab');
-      if (raw) {
-        const p = JSON.parse(raw);
-        if (p && Number.isFinite(p.x) && Number.isFinite(p.y)) return clampFabPos(p);
-      }
-    } catch (err) { /* ignore */ }
-    return defaultFabPos();
-  }
-  function saveFabPos(p) {
-    try { window.localStorage.setItem('control-lab.fab', JSON.stringify(p)); } catch (err) { /* ignore */ }
-  }
-
   function Launcher() {
     return h(React.Fragment, null,
       h('style', null, LAUNCHER_CSS),
@@ -282,15 +253,10 @@ function createControlLabUI(React, h, engine, t) {
         title: tr('launch', '控制绘图'),
         'aria-label': tr('launch', '控制绘图'),
         onClick: () => Store.setOpen(true),
-      }, h('svg', {
-        viewBox: '0 0 24 24', width: 18, height: 18, fill: 'none',
-        stroke: 'currentColor', strokeWidth: 1.7, strokeLinecap: 'round', strokeLinejoin: 'round',
-        'aria-hidden': true,
       },
-        h('path', { d: 'M3 12h18M12 3v18', opacity: 0.42 }),
-        h('path', { d: 'M4.5 16.2c2.6-8.3 12.4-8.3 15 0' }),
-        h('circle', { cx: 17.2, cy: 8.1, r: 1.65, fill: 'currentColor', stroke: 'none' })
-      ))
+        h(Logo),
+        h('span', { className: 'cl-launcher-label' }, tr('launch', '控制绘图'))
+      )
     );
   }
 
@@ -800,10 +766,7 @@ function createControlLabUI(React, h, engine, t) {
     const [showAsymptotes, setShowAsymptotes] = React.useState(true);
     const [showGrid, setShowGrid] = React.useState(true);
     const [copied, setCopied] = React.useState(false);
-    const [fabPos, setFabPos] = React.useState(readFabPos);
     const inputRef = React.useRef(null);
-    const fabDragRef = React.useRef(null);
-    const lastFabDragRef = React.useRef(0);
 
     React.useEffect(() => {
       const id = window.setTimeout(() => { setDebounced(expr); saveExpr(expr); }, 230);
@@ -825,64 +788,7 @@ function createControlLabUI(React, h, engine, t) {
       return engine.analyze(debounced, Number.isFinite(k) ? k : 1);
     }, [debounced, kValue]);
 
-    if (!open) return h(React.Fragment, null,
-      h('style', null, LAUNCHER_CSS),
-      h('button', {
-        type: 'button',
-        className: 'cl-fab',
-        title: '控制绘图（可拖动）',
-        'aria-label': tr('launch', '控制绘图'),
-        style: { left: fabPos.x, top: fabPos.y },
-        onPointerDown: (e) => {
-          if (e.pointerType === 'mouse' && e.button !== 0) return;
-          const r = e.currentTarget.getBoundingClientRect();
-          fabDragRef.current = {
-            id: e.pointerId,
-            sx: e.clientX,
-            sy: e.clientY,
-            x: r.left,
-            y: r.top,
-            moved: false,
-          };
-          try { e.currentTarget.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ }
-        },
-        onPointerMove: (e) => {
-          const d = fabDragRef.current;
-          if (!d || d.id !== e.pointerId) return;
-          const dx = e.clientX - d.sx;
-          const dy = e.clientY - d.sy;
-          if (Math.abs(dx) > 3 || Math.abs(dy) > 3) d.moved = true;
-          if (!d.moved) return;
-          const w = e.currentTarget.offsetWidth || 140;
-          const h = e.currentTarget.offsetHeight || 38;
-          const vw = window.innerWidth || 1280;
-          const vh = window.innerHeight || 800;
-          setFabPos({
-            x: Math.min(Math.max(8, d.x + dx), Math.max(8, vw - w - 8)),
-            y: Math.min(Math.max(8, d.y + dy), Math.max(8, vh - h - 8)),
-          });
-        },
-        onPointerUp: (e) => {
-          const d = fabDragRef.current;
-          if (!d) return;
-          fabDragRef.current = null;
-          if (d.moved) {
-            lastFabDragRef.current = Date.now();
-            const r = e.currentTarget.getBoundingClientRect();
-            saveFabPos({ x: r.left, y: r.top });
-          }
-          try { e.currentTarget.releasePointerCapture(e.pointerId); } catch (err) { /* ignore */ }
-        },
-        onPointerCancel: () => { fabDragRef.current = null; },
-        onClick: () => {
-          if (Date.now() - lastFabDragRef.current < 350) return;
-          Store.setOpen(true);
-        },
-      },
-        h(Logo),
-        h('span', null, tr('launch', '控制绘图'))
-      )
-    );
+    if (!open) return null;
 
     const steps = result.ok ? (result.steps[tab] || []) : [];
     const rootLocus = result.ok ? result.rootLocus : null;
